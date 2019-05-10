@@ -312,14 +312,6 @@ server <- function(input, output) {
     time_period <- input$time_period
     cv_2 <- input$cv_2
     
-    save(con_group_2,
-         exp_group_2,
-         exp_size,
-         time_period,
-         cv_2,
-         file = 'temp.RData')
-    
-    
     text_rotundi <- n4incidence(le=exp_group_2, lc=con_group_2, m=exp_size, t=time_period, CV=cv_2)
     # sample_size <- text_rotundi[11]
     text_rotundi <- unlist(paste0('Per Rotundi/Donner (2009): The required sample size is a minimum of ', round(unlist(text_rotundi[11])), ' clusters in the experimental group and a 
