@@ -16,7 +16,7 @@ sidebar <- dashboardSidebar(
     menuItem(
       text="Hayes & Bennet",
       tabName="hayes",
-      icon=icon("eye")),
+      icon=icon("bar-chart-o")),
     menuItem(
       text="Rotundi and Donner",
       tabName="rotundi",
@@ -24,7 +24,7 @@ sidebar <- dashboardSidebar(
     menuItem(
       text = 'clusterPower (CRAN)',
       tabName = 'cluster_power',
-      icon = icon("cog", lib = "glyphicon")),
+      icon = icon("adjust", lib = "glyphicon")),
       menuItem(
         text = 'About databrew',
         tabName = 'about',
