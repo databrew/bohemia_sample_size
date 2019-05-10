@@ -292,11 +292,6 @@ server <- function(input, output) {
     # set default to NULL
     con_group_2 <- exp_group_2 <- exp_size <- time_period <- cv_2  <- NULL
     
-    exp_group_2 <- 0.01
-    con_group_2 <- 0.012
-    exp_size <- 200
-    time_period <- 1
-    cv_2 <- 0.29
     
     exp_group_2 <- input$exp_group_2
     con_group_2 <- input$con_group_2
@@ -326,10 +321,6 @@ server <- function(input, output) {
   
   get_cluster_power_data <- reactive({
     
-    mean_clusters <- 428
-    diff <- 0.02
-    cluster_per_condition <- 35
-    varw <- 0.0008
     
     mean_clusters <- input$mean_cluster_size
     diff <- input$diff
@@ -356,8 +347,6 @@ server <- function(input, output) {
   
   output$cv_power_plot <- renderPlot({
     
-    varw <- 0.001
-    cv_3 <- 0.29
     varw <- input$varw
     cv_3 <- input$cv_3
     cv_dat <- get_cluster_power_data()
@@ -377,7 +366,6 @@ server <- function(input, output) {
   
   output$icc_power_plot <- renderPlot({
     icc_dat <- get_cluster_power_data()
-    
     icc_level <- input$icc
     varw <- input$varw
     cv_dat <- get_cluster_power_data()
