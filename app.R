@@ -7,8 +7,9 @@ library(ggplot2)
 library(clusterPower)
 library(CRTSize)
 library(data.table)
+library(databrew)
 
-
+source('theme_dashboard.R')
 source('functions.R')
 header <- dashboardHeader(title="Sample size")
 sidebar <- dashboardSidebar(
@@ -25,10 +26,10 @@ sidebar <- dashboardSidebar(
       text = 'clusterPower (CRAN)',
       tabName = 'cluster_power',
       icon = icon("cog", lib = "glyphicon")),
-      menuItem(
-        text = 'About databrew',
-        tabName = 'about',
-        icon = icon("cog", lib = "glyphicon"))
+    menuItem(
+      text = 'About databrew',
+      tabName = 'about',
+      icon = icon("cog", lib = "glyphicon"))
   )
 )
 
@@ -40,176 +41,168 @@ body <- dashboardBody(
     tabItem(
       tabName="hayes",
       fluidPage(
-        column(2,
+        column(4,
                sliderInput('exp_group',
-                           'Experimental group',
+                           'Rate in experimental group',
                            min = 0,
                            max = 1,
-                           value = 0.01)),
-        column(2,
+                           value = 0.01),
                sliderInput('con_group',
-                           'Control group',
+                           'Rate in control group',
                            min = 0.0,
                            max = 0.2,
-                           value = 0.005)),
-        column(1,
-               sliderInput('alpha_num',
-                           'Significan level (alpha)',
-                           min = 0.0,
-                           max = 1,
-                           value = 0.05)),
-        column(1,
-               sliderInput('beta_num',
-                           'Significan level (beta)',
-                           min = 0.0,
-                           max = 1,
-                           value = 0.8)),
-        column(2,
+                           value = 0.005),
+               fluidRow(
+                 column(6,
+                        sliderInput('alpha_num',
+                                    'Significance level (alpha)',
+                                    min = 0.0,
+                                    max = 1,
+                                    value = 0.05)),
+                 column(6,
+                        sliderInput('beta_num',
+                                    'Significance level (beta)',
+                                    min = 0.0,
+                                    max = 1,
+                                    value = 0.8))
+               ),
                sliderInput('cv',
                            'CV',
                            min = 0.0,
                            max = 1,
-                           value = c(0.015, 0.5))),
-        column(2,
+                           value = 0.29),
                sliderInput('cluster_size',
                            'Cluster size',
                            min = 0,
                            max = 500,
-                           value =200)),
-        column(2,
+                           value =200),
                sliderInput('followup',
                            'Follow ups',
                            min = 1,
                            max = 10,
-                           value = 1))
-        
+                           value = 1)
         ),
-      br(), br(),
-      fluidPage( 
-        column(4,
-               h3(textOutput('sample_size'))),
         column(8,
-               plotOutput('hayes_plot')))
-       
+               plotOutput('hayes_plot'),
+               h3(textOutput('sample_size')))
+      )),
+  
+  tabItem(
+    tabName="rotundi",
+    fluidPage(
+      fluidRow(
+        column(2,
+               sliderInput('exp_group_2',
+                           'Rate in experimental group',
+                           min = 0,
+                           max = 1,
+                           value = 0.01036)),
+        column(2,
+               sliderInput('con_group_2',
+                           'Rate in control group',
+                           min = 0.0,
+                           max = 1,
+                           value = 0.0148)),
+        column(2,
+               sliderInput('exp_size',
+                           'Size of experimental group',
+                           min = 1,
+                           max = 1000,
+                           value = 424)),
+        column(2,
+               sliderInput('time_period',
+                           'Time periods',
+                           min = 0,
+                           max = 5,
+                           value = 1)),
+        column(2,
+               sliderInput('cv_2',
+                           'CV',
+                           min = 0.0,
+                           max = 1,
+                           value = 0.29))
+      ),
+      fluidRow(
+        column(8,
+               textOutput('text_rotundi'))
+      )
       
-    ),
-    
-    tabItem(
-      tabName="rotundi",
-      fluidPage(
-        fluidRow(
-          column(2,
-                 sliderInput('exp_group_2',
-                             'Experimental group',
-                             min = 0,
-                             max = 1,
-                             value = 0.01036)),
-          column(2,
-                 sliderInput('con_group_2',
-                             'Control group',
-                             min = 0.0,
-                             max = 1,
-                             value = 0.0148)),
-          column(2,
-                 sliderInput('exp_size',
-                             'Size of experimental group',
-                             min = 1,
-                             max = 1000,
-                             value = 424)),
-          column(2,
-                 sliderInput('time_period',
-                             'Time periods',
-                             min = 0,
-                             max = 5,
-                             value = 1)),
-          column(2,
-                 sliderInput('cv_2',
-                             'CV',
-                             min = 0.0,
-                             max = 1,
-                             value = 0.29))
-        ),
-        fluidRow(
-          column(8,
-                 textOutput('text_rotundi'))
-        )
-       
+      
+    )
+  ),
+  
+  tabItem(
+    tabName="cluster_power",
+    fluidPage(
+      fluidRow(
+        column(2,
+               sliderInput('mean_cluster_size',
+                           'Mean cluster size',
+                           min = 0,
+                           max = 500,
+                           value = 428)),
+        column(2,
+               sliderInput('diff',
+                           'Difference in conditional means',
+                           min = 0.0,
+                           max = 1,
+                           value = 0.0148)),
+        column(2,
+               sliderInput('cluster_per_condition',
+                           'Cluster per condition',
+                           min = 1,
+                           max = 50,
+                           value = 35)),
+        column(2,
+               sliderInput('varw',
+                           'Within cluster variation',
+                           min = 0,
+                           max = 0.1,
+                           value = 0.001)),
+        column(2,
+               sliderInput('icc',
+                           'Choose ICC',
+                           min = 0,
+                           max = 0.1,
+                           value = 0.05)),
+        column(2,
+               sliderInput('cv_3',
+                           'CV',
+                           min = 0,
+                           max = 1,
+                           value = 0.2))
         
+      ),
+      fluidRow(
+        column(6,
+               plotOutput('icc_power_plot')),
+        column(6,
+               plotOutput('cv_power_plot'))
       )
-    ),
-    
-    tabItem(
-      tabName="cluster_power",
-      fluidPage(
-        fluidRow(
-          column(2,
-                 sliderInput('mean_cluster_size',
-                             'Mean cluster size',
-                             min = 0,
-                             max = 500,
-                             value = 428)),
-          column(2,
-                 sliderInput('diff',
-                             'Difference in conditional means',
-                             min = 0.0,
-                             max = 1,
-                             value = 0.0148)),
-          column(2,
-                 sliderInput('cluster_per_condition',
-                             'Cluster per condition',
-                             min = 1,
-                             max = 50,
-                             value = 35)),
-          column(2,
-                 sliderInput('varw',
-                             'Within cluster variation',
-                             min = 0,
-                             max = 0.1,
-                             value = 0.001)),
-          column(2,
-                 sliderInput('icc',
-                             'Choose ICC',
-                             min = 0,
-                             max = 0.1,
-                             value = 0.05)),
-          column(2,
-                 sliderInput('cv_3',
-                             'CV',
-                             min = 0,
-                             max = 1,
-                             value = 0.2))
-          
-        ),
-        fluidRow(
-          column(6,
-                 plotOutput('icc_power_plot')),
-          column(6,
-                plotOutput('cv_power_plot'))
-        )
-        
-        
+      
+      
+    )
+  ),
+  
+  
+  tabItem(
+    tabName = 'about',
+    fluidPage(
+      fluidRow(
+        h4('Built in partnership with ',
+           a(href = 'http://databrew.cc',
+             target='_blank', 'Databrew'),
+           align = 'center'),
+        p('Empowering research and analysis through collaborative data science.', align = 'center'),
+        div(a(actionButton(inputId = "email", label = "info@databrew.cc", 
+                           icon = icon("envelope", lib = "font-awesome")),
+              href="mailto:info@databrew.cc",
+              align = 'center')), 
+        style = 'text-align:center;'
       )
-    ),
-    
-    
-    tabItem(
-      tabName = 'about',
-      fluidPage(
-        fluidRow(
-                 h4('Built in partnership with ',
-                   a(href = 'http://databrew.cc',
-                     target='_blank', 'Databrew'),
-                   align = 'center'),
-          p('Empowering research and analysis through collaborative data science.', align = 'center'),
-          div(a(actionButton(inputId = "email", label = "info@databrew.cc", 
-                             icon = icon("envelope", lib = "font-awesome")),
-                href="mailto:info@databrew.cc",
-                align = 'center')), 
-          style = 'text-align:center;'
-          )
-        )
     )
   )
+)
 )
 
 # UI
@@ -224,7 +217,7 @@ server <- function(input, output) {
   get_hayes_data <- reactive({ 
     # set default to NULL
     con_group <- exp_group <- alpha_num <- beta_num <- cv <- cluster_size <- follow_up <- NULL
-
+    
     exp_group <- input$exp_group
     con_group <- input$con_group
     alpha_num <- input$alpha_num
@@ -233,19 +226,17 @@ server <- function(input, output) {
     cluster_size <- input$cluster_size
     follow_up <- input$followup
     
-    mean_cv <- mean(cv)
-
-    num <-round(hayes_rates( leff= exp_group, lcont= con_group, alpha=alpha_num, beta=beta_num, CV= mean_cv, clustersize= cluster_size, followup=follow_up),2)
-
+    num <-round(hayes_rates( leff= exp_group, lcont= con_group, alpha=alpha_num, beta=beta_num, CV= cv, clustersize= cluster_size, followup=follow_up),2)
+    
     return(num)
-   
+    
   })
   #   
   
   hayes_df <- reactive({
     cv <- NULL
     cv <- input$cv
-    CVs <- seq(cv[1], cv[2], by=0.025)
+    CVs <- seq(0,1, by=0.025)
     exp_group <- input$exp_group
     con_group <- input$con_group
     alpha_num <- input$alpha_num
@@ -269,21 +260,28 @@ server <- function(input, output) {
                           '. Assess sensitivity CV (kappa) estimates by plotting the number of clusters 
                           per arm against CV.')
     return(text_output)
-  
+    
   })
   
   output$hayes_plot <- renderPlot({
     hayes_num <- get_hayes_data()
-
+    cv <- input$cv
     df <- hayes_df()
+    hn <- get_hayes_data()
+    the_point <- tibble(x = cv, y = hn)
     
-    p <- ggplot(data = df, aes(CV, clusters)) + geom_line() +
+    p <- ggplot(data = df, aes(CV, clusters)) + 
+      geom_area(fill = '#333333', alpha = 0.2) +
+      geom_line() +
       labs( title="Influence of CV (kappa) on number of clusters per arm",
             subtitle="using Hayes & Bennet (Int. J. Epidem. 1999;28:319-326)" ) +
-      geom_vline( xintercept = 0.29, linetype="dotted" ) +
-      theme_classic()
+      geom_vline( xintercept = cv, linetype="dotted" ) +
+      geom_hline(yintercept = hn, linetype = 'dotted') +
+      geom_point(data = the_point, aes(x = x, y = y)) +
+      theme_dashboard() +
+      labs(y = 'Number of clusters per arm')
     return(p)
-
+    
     
   })
   
@@ -299,13 +297,13 @@ server <- function(input, output) {
     time_period <- input$time_period
     cv_2 <- input$cv_2
     
-
+    
     text_rotundi <- n4incidence(le=exp_group_2, lc=con_group_2, m=exp_size, t=time_period, CV=cv_2)
     # sample_size <- text_rotundi[11]
     text_rotundi <- unlist(paste0('The Rotundi/Donner (2009): The required sample size is a minimum of ', round(unlist(text_rotundi[11])), ' clusters in the experimental group and a 
-                           minimum of ', round(unlist(text_rotundi[12])), ' in the control group, followed for the time period of length ', 
+                                  minimum of ', round(unlist(text_rotundi[12])), ' in the control group, followed for the time period of length ', 
                                   round(unlist(text_rotundi[3]))))
-
+    
     return(text_rotundi)
     
   })
@@ -316,7 +314,7 @@ server <- function(input, output) {
     text_rotundi <- get_rotundi_data()
     
     return(text_rotundi)
-
+    
   })
   
   get_cluster_power_data <- reactive({
@@ -376,7 +374,7 @@ server <- function(input, output) {
       labs( title="Influence of CV (kappa) on power") +
       theme_classic()
     
-  
+    
     
   })
   
